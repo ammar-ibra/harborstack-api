@@ -180,8 +180,8 @@ app.delete("/api/v1/shifts/:id", (req, res) => {
     });
 });
 
-const PORT = 3000; 
+const PORT =process.env.port
 
 app.listen(PORT, () => {
-    console.log(`✅ HarborStack API is live at http://localhost:${PORT}`);
+    console.log(` HarborStack API is live at http://localhost:${PORT}`);
 });
