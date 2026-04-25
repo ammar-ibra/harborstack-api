@@ -29,17 +29,17 @@ app.get("/api/v1/crews" ,(req , res) =>{
 //[Get] signale Crew Member By id
 app.get("/api/v1/crews/:id" ,(req , res) =>{
     const id = +req.params.id;
-    const crew = crews.find(e => e.id ===id);
+    const filteredCrew = crews.filter(e => e.id === id);
 
-    if(!crew){
-    return res.status(404).json({
-            message : "This Crews Does not Exist",
+    if(filteredCrew.length === 0){ // الفحص عن طريق الطول
+        return res.status(404).json({
+            message : "This Crew Member Does not Exist",
             data : null
         });
     }
     res.status(200).json({
-        message : "Get Crews By ID Successfully",
-        data : crew
+        message : "Get Crew By ID Successfully",
+        data : filteredCrew[0] // نرجع الكائن نفسه مو المصفوفة
     });
 });
 //[Post] (Create New Crew Member)
@@ -63,21 +63,27 @@ app.post("/api/v1/crews" , (req , res) =>{
 //[Put] Update the Crew
 app.put("/api/v1/crews/:id" , (req , res) =>{
     const id = +req.params.id;
-    const crew = crews.find(e => e.id === id);
+    // الفلترة تجلب مصفوفة تحتوي على العنصر المطلوب
+    const filteredCrews = crews.filter(e => e.id === id);
 
-if (!crew){
-    return res.status(404).json({
-        message : "This User Does not Exist",
-        data : null
+    if (filteredCrews.length === 0){
+        return res.status(404).json({
+            message : "This User Does not Exist",
+            data : null
+        });
+    }
+
+    const {name , role} = req.body;
+
+    // تعديل الخصائص على العنصر الأول في المصفوفة المفلترة
+    // بما أن الكائنات تُمرر بالمرجع (Reference)، التعديل هنا سيغير الأصل في مصفوفة crews
+    filteredCrews[0].name = name;
+    filteredCrews[0].role = role;
+
+    res.status(200).json({
+        message: "Update User successfully",
+        data : filteredCrews[0] // إعادة العنصر المعدل فقط
     });
-}
-const {name , role} = req.body;
-crew.name = name;
-crew.role = role;
-res.status(201).json({
-    message: "Update User sccessfully",
-    data : crew
-})
 });
 
 //[Delete] Delete The Member from crews
@@ -110,17 +116,17 @@ app.get("/api/v1/shifts" , (req , res) =>{
 //[Get] Get Single shifts By ID
 app.get("/api/v1/shifts/:id" , (req , res) =>{
     const id = +req.params.id;
-    const shift = shifts.find(s => s.id === id);
+    const filteredShift = shifts.filter(s => s.id === id);
 
-    if(!shift){
+    if(filteredShift.length === 0){ // الفحص عن طريق الطول
         return res.status(404).json({
-            message : "shift not found",
+            message : "Shift not found",
             data : null
         })
     }
     res.status(200).json({
-        message : "Get shifts successfully",
-        data  : shift
+        message : "Get shift successfully",
+        data  : filteredShift[0] // نرجع الكائن نفسه
     })
 });
 
@@ -144,22 +150,29 @@ app.post("/api/v1/shifts" , (req , res) =>{
 //[put] Update the shifts
 app.put("/api/v1/shifts/:id" , (req , res) =>{
     const id = +req.params.id;
-    const shift = shifts.find(s => s.id === id);
-    if(!shift){
+    // الفلترة تعيد مصفوفة
+    const filteredShifts = shifts.filter(s => s.id === id);
+
+    // التحقق من طول المصفوفة (لأن المصفوفة الفارغة تعتبر true في JS)
+    if (filteredShifts.length === 0){
         return res.status(404).json({
-            message : "This User Does not Exist",
+            message : "This Shift Does not Exist",
             data : null
-        })
+        });
     }
+
     const {crewId, berth, startsAt, endsAt} = req.body;
-    shift.crewId = crewId;
-    shift.berth = berth;
-    shift.startsAt = startsAt;
-    shift.endsAt = endsAt;
-    res.status(201).json({
-        message : "Update User sccessfully",
-        data : shift
-    })
+
+    // التعديل على العنصر الأول داخل المصفوفة الناتجة عن الفلترة
+    filteredShifts[0].crewId = crewId;
+    filteredShifts[0].berth = berth;
+    filteredShifts[0].startsAt = startsAt;
+    filteredShifts[0].endsAt = endsAt;
+
+    res.status(200).json({ // يفضل استخدام 200 للتحديث
+        message : "Update Shift successfully",
+        data : filteredShifts[0] // إعادة العنصر المعدل فقط (بدون أقواس المصفوفة)
+    });
 });
 
 app.delete("/api/v1/shifts/:id", (req, res) => {
@@ -180,7 +193,7 @@ app.delete("/api/v1/shifts/:id", (req, res) => {
     });
 });
 
-const PORT =process.env.port
+const PORT =process.env.PORT
 
 app.listen(PORT, () => {
     console.log(` HarborStack API is live at http://localhost:${PORT}`);
