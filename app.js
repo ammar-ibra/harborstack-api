@@ -31,7 +31,7 @@ app.get("/api/v1/crews/:id" ,(req , res) =>{
     const id = +req.params.id;
     const filteredCrew = crews.filter(e => e.id === id);
 
-    if(filteredCrew.length === 0){ // الفحص عن طريق الطول
+    if(filteredCrew.length === 0){ 
         return res.status(404).json({
             message : "This Crew Member Does not Exist",
             data : null
@@ -39,7 +39,7 @@ app.get("/api/v1/crews/:id" ,(req , res) =>{
     }
     res.status(200).json({
         message : "Get Crew By ID Successfully",
-        data : filteredCrew[0] // نرجع الكائن نفسه مو المصفوفة
+        data : filteredCrew[0] 
     });
 });
 //[Post] (Create New Crew Member)
@@ -63,7 +63,6 @@ app.post("/api/v1/crews" , (req , res) =>{
 //[Put] Update the Crew
 app.put("/api/v1/crews/:id" , (req , res) =>{
     const id = +req.params.id;
-    // الفلترة تجلب مصفوفة تحتوي على العنصر المطلوب
     const filteredCrews = crews.filter(e => e.id === id);
 
     if (filteredCrews.length === 0){
@@ -74,15 +73,12 @@ app.put("/api/v1/crews/:id" , (req , res) =>{
     }
 
     const {name , role} = req.body;
-
-    // تعديل الخصائص على العنصر الأول في المصفوفة المفلترة
-    // بما أن الكائنات تُمرر بالمرجع (Reference)، التعديل هنا سيغير الأصل في مصفوفة crews
     filteredCrews[0].name = name;
     filteredCrews[0].role = role;
 
     res.status(200).json({
         message: "Update User successfully",
-        data : filteredCrews[0] // إعادة العنصر المعدل فقط
+        data : filteredCrews[0] 
     });
 });
 
@@ -118,7 +114,7 @@ app.get("/api/v1/shifts/:id" , (req , res) =>{
     const id = +req.params.id;
     const filteredShift = shifts.filter(s => s.id === id);
 
-    if(filteredShift.length === 0){ // الفحص عن طريق الطول
+    if(filteredShift.length === 0){ 
         return res.status(404).json({
             message : "Shift not found",
             data : null
@@ -126,7 +122,7 @@ app.get("/api/v1/shifts/:id" , (req , res) =>{
     }
     res.status(200).json({
         message : "Get shift successfully",
-        data  : filteredShift[0] // نرجع الكائن نفسه
+        data  : filteredShift[0] 
     })
 });
 
@@ -150,10 +146,8 @@ app.post("/api/v1/shifts" , (req , res) =>{
 //[put] Update the shifts
 app.put("/api/v1/shifts/:id" , (req , res) =>{
     const id = +req.params.id;
-    // الفلترة تعيد مصفوفة
     const filteredShifts = shifts.filter(s => s.id === id);
 
-    // التحقق من طول المصفوفة (لأن المصفوفة الفارغة تعتبر true في JS)
     if (filteredShifts.length === 0){
         return res.status(404).json({
             message : "This Shift Does not Exist",
@@ -163,15 +157,15 @@ app.put("/api/v1/shifts/:id" , (req , res) =>{
 
     const {crewId, berth, startsAt, endsAt} = req.body;
 
-    // التعديل على العنصر الأول داخل المصفوفة الناتجة عن الفلترة
+   
     filteredShifts[0].crewId = crewId;
     filteredShifts[0].berth = berth;
     filteredShifts[0].startsAt = startsAt;
     filteredShifts[0].endsAt = endsAt;
 
-    res.status(200).json({ // يفضل استخدام 200 للتحديث
+    res.status(200).json({ 
         message : "Update Shift successfully",
-        data : filteredShifts[0] // إعادة العنصر المعدل فقط (بدون أقواس المصفوفة)
+        data : filteredShifts[0] 
     });
 });
 
